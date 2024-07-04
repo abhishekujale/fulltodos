@@ -2,8 +2,7 @@
 const express = require("express")
 const { todo } = require("./db")
 const bodyParser = require("body-parser");
-const { createTodo } = require("./types");
-
+const { createTodo, updateTodo } = require("./types");
 const app = express()
 
 
@@ -43,7 +42,7 @@ app.get("/todos", async (req, res) => {
 })
 app.put("/completed", async (req, res) => {
     const updatePayload = req.body;
-    const parsedPayload = updatePayload.safeParse(updatePayload)
+    const parsedPayload = updateTodo.safeParse(updatePayload)
     if (!parsedPayload.success) {
         return res.status(411).json({
             msg: "Wrong Input"

@@ -1,17 +1,15 @@
-//
 
 const express = require("express")
-
+const { todo } = require("./db")
 const bodyParser = require("body-parser");
 const { createTodo } = require("./types");
 
 const app = express()
 
 
-    /
-    app.use(express.json());
+app.use(express.json());
 
-app.get("/todo", (req, res, err) => {
+app.post("/todo", async (req, res) => {
     const createPayload = req.body;
     const parsedPayload = createTodo.safeParse(createPayload)
 
@@ -21,10 +19,29 @@ app.get("/todo", (req, res, err) => {
             msg: "Wrong Input"
         })
     }
+    await todo.create({
+        title: createPayload.title,
+        description: createPayload.description,
+        completed: createPayload.completed
+    })
+    res.json(
+        {
+            msg: "Todo created"
+        }
+    )
 })
-app.post("/todos", (req, res, err) => {
+
+
+app.get("/todos", async (req, res) => {
+    const todos = await todo.find({
+
+    })
+    // console.log(todos);//promise
+    res.json({
+        todos
+    })
 })
-app.put("/completed", (req, res, err) => {
+app.put("/completed", async (req, res) => {
     const updatePayload = req.body;
     const parsedPayload = updatePayload.safeParse(updatePayload)
     if (!parsedPayload.success) {
@@ -33,8 +50,17 @@ app.put("/completed", (req, res, err) => {
         })
     }
     //Mongoose
+
+    await todo.update({
+        _id: updatePayload.id
+    }, {
+        completed: true
+    })
+    res.json({
+        msg: "Todo updated"
+    })
 })
 
-app.post()
+// app.post()
 
 app.listen(3000)

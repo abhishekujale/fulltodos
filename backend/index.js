@@ -1,13 +1,19 @@
 
 const express = require("express")
+const mongoose = require("mongoose")
 const { todo } = require("./db")
 const bodyParser = require("body-parser");
+const cors = require('cors');
 const { createTodo, updateTodo } = require("./types");
 const app = express()
 
 
 app.use(express.json());
-
+app.use(cors(
+    {
+        origin: "http://localhost:5173"
+    }
+));
 app.post("/todo", async (req, res) => {
     const createPayload = req.body;
     const parsedPayload = createTodo.safeParse(createPayload)
@@ -22,7 +28,7 @@ app.post("/todo", async (req, res) => {
         title: createPayload.title,
         description: createPayload.description,
         completed: createPayload.completed
-    })
+    });
     res.json(
         {
             msg: "Todo created"
